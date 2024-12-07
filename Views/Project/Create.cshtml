@@ -1,0 +1,61 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model Project
+
+@{
+    ViewData["Title"] = "Create a new project";
+}
+
+<h2 class="text-center">Create a new project</h2>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label asp-for="Title" class="control-label"></label>
+        <input asp-for="Title" class="form-control" />
+        @* <span asp-validation-for="Title" class="text-danger"></span> *@
+    </div>
+    <div class="form-group">
+        <label asp-for="Description" class="control-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        @* <span asp-validation-for="Description" class="text-danger"></span> *@
+    </div>
+    <div class="form-group">
+        <label asp-for="GoalAmount" class="control-label">Goal Amount</label>
+        <input asp-for="GoalAmount" class="form-control" />
+        @* <span asp-validation-for="GoalAmount" class="text-danger"></span> *@
+    </div>
+    <div class="form-group">
+        <label asp-for="CurrentAmount" class="control-label">Current Amount</label>
+        <input asp-for="CurrentAmount" class="form-control" />
+        @* <span asp-validation-for="CurrentAmount" class="text-danger"></span> *@
+    </div>
+    <div class="form-group">
+        <label asp-for="StartDate" class="control-label">Start Date</label>
+        <input asp-for="StartDate" class="form-control" type="date" />
+        @* <span asp-validation-for="StartDate" class="text-danger"></span> *@
+    </div>
+    <div class="form-group">
+        <label asp-for="EndDate" class="control-label">End Date</label>
+        <input asp-for="EndDate" class="form-control" type="date" />
+        @* <span asp-validation-for="EndDate" class="text-danger"></span> *@
+    </div>
+    <div class="form-group">
+        <label asp-for="UserId" class="control-label">Creator</label>
+        <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+        @* <span asp-validation-for="UserId" class="text-danger"></span> *@
+    </div>
+    <div class="form-group">
+        <label asp-for="CategoryId" class="control-label">Category</label>
+        <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+        @* <span asp-validation-for="CategoryId" class="text-danger"></span> *@
+    </div>
+    <div class="form-group">
+        <input type="submit" asp-controller="Project" value="Create" class="btn btn-primary" />
+    </div>
+</form>
+
+<a asp-action="Index" class="btn btn-primary mb-3">Back to the list</a>

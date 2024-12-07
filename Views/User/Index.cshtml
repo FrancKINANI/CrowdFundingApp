@@ -13,7 +13,7 @@
 <h2 class="text-center">List of users</h2>
 
 <p>
-    <a href="@Url.Action("Create", "User")">Create a new user</a>
+    <a href="@Url.Action("Create", "User")" class="btn btn-primary mb-3">Create a new user</a>
 </p>
 <table class="table">
     <thead>
@@ -33,7 +33,7 @@
                 <td>@user.CreatedAt.ToString("yyyy-MM-dd")</td>
                 <td>
                     <a href="@Url.Action("Details", "User", new { id = user.UserId })">Details</a> |
-                    <a href="@Url.Action("Edit", "User", new { id = user.UserId })">Modify</a> |
+                    <a href="@Url.Action("Edit", "User", new { id = user.UserId })">Edit</a> |
                     <a href="@Url.Action("Delete", "User", new { id = user.UserId })">Delete</a>
                 </td>
             </tr>
