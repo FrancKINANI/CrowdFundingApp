@@ -32,9 +32,9 @@
                 <td>@user.Email</td>
                 <td>@user.CreatedAt.ToString("yyyy-MM-dd")</td>
                 <td>
-                    <a href="@Url.Action("Details", "User", new { id = user.UserId })">Details</a> |
-                    <a href="@Url.Action("Edit", "User", new { id = user.UserId })">Edit</a> |
-                    <a href="@Url.Action("Delete", "User", new { id = user.UserId })">Delete</a>
+                    <a href="@Url.Action("Details", "User", new { id = user.UserId })" class="btn btn-info">Details</a> |
+                    <a href="@Url.Action("Edit", "User", new { id = user.UserId })" class="btn btn-warning">Edit</a> |
+                    <a href="@Url.Action("Delete", "User", new { id = user.UserId })" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }

@@ -1,0 +1,36 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model List<Contribution>
+
+<h2>List of Contributions</h2>
+
+<a asp-action="Create" class="btn btn-primary mb-3">Add a contribution</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Contribution amount</th>
+            <th>Date</th>
+            <th>Contributor</th>
+            <th>Project</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var contribution in Model)
+        {
+            <tr>
+                <td>$ @contribution.Amount</td>
+                <td>@contribution.ContributionDate.ToString("yyyy-MM-dd")</td>
+                <td>@contribution.User.Username</td>
+                <td>@contribution.Project.Title</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@contribution.ContributionId" class="btn btn-info">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@contribution.ContributionId" class="btn btn-warning">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@contribution.ContributionId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

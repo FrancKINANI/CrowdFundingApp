@@ -42,9 +42,9 @@
                 <td>@project.User.Username</td>
                 <td>@project.Category.Name</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@project.ProjectId">Details</a> |
-                    <a asp-action="Edit" asp-route-id="@project.ProjectId">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@project.ProjectId">Delete</a>
+                    <a asp-action="Details" asp-route-id="@project.ProjectId" class="btn btn-info">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-warning">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@project.ProjectId" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }
