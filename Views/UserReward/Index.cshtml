@@ -1,0 +1,44 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model List<UserReward>
+
+@{
+    ViewData["Title"] = "List of Awards";
+}
+
+<h2 class="text-center">List of Awards</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary mb-3">Create a new award</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Reward</th>
+            <th>Project</th>
+            <th>Grant date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var userReward in Model)
+        {
+            <tr>
+                <td>@userReward.User.Username</td>
+                <td>@userReward.Reward.Description</td>
+                <td>@userReward.Reward.Project.Title</td>
+                <td>@userReward.DateAwarded.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@userReward.UserRewardId" class="btn btn-info">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@userReward.UserRewardId" class="btn btn-warning">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@userReward.UserRewardId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
