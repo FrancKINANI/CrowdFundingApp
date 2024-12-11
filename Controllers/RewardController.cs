@@ -1,4 +1,5 @@
 ﻿using CrowdFundingApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CrowdFundingApp.Controllers
 {
+    //[Authorize(Roles = "Admin, User")]
     public class RewardController : Controller
     {
         public CrowdFundingDbContext _context {  get; set; }

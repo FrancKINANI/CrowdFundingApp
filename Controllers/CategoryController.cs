@@ -1,13 +1,15 @@
 ﻿using CrowdFundingApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CrowdFundingApp.Controllers
 {
+    //[Authorize(Roles = "Admin")]
     public class CategoryController : Controller
     {
-        private CrowdFundingDbContext _context;
+        private readonly CrowdFundingDbContext _context;
 
         public CategoryController(CrowdFundingDbContext context)
         {

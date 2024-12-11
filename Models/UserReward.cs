@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CrowdFundingApp.Models
@@ -9,13 +10,12 @@ namespace CrowdFundingApp.Models
         public int UserRewardId { get; set; }
 
         [ForeignKey("User")]
-        public int UserId { get; set; }
-        public User User { get; set; }
+        public string? UserId { get; set; }
+        public User? User { get; set; }
 
         [ForeignKey("Reward")]
         public int RewardId { get; set; }
-        public Reward Reward { get; set; }
-
+        public Reward? Reward { get; set; }
         public DateTime DateAwarded { get; set; }
     }
 }

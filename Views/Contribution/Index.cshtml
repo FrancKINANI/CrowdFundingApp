@@ -23,7 +23,7 @@
             <tr>
                 <td>$ @contribution.Amount</td>
                 <td>@contribution.ContributionDate.ToString("yyyy-MM-dd")</td>
-                <td>@contribution.User.Username</td>
+                <td>@contribution.User.UserName</td>
                 <td>@contribution.Project.Title</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@contribution.ContributionId" class="btn btn-info">Details</a> |

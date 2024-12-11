@@ -29,7 +29,7 @@
         @foreach (var userReward in Model)
         {
             <tr>
-                <td>@userReward.User.Username</td>
+                <td>@userReward.User.UserName</td>
                 <td>@userReward.Reward.Description</td>
                 <td>@userReward.Reward.Project.Title</td>
                 <td>@userReward.DateAwarded.ToString("yyyy-MM-dd")</td>

@@ -1,20 +1,26 @@
 ﻿using CrowdFundingApp.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace CrowdFundingApp.Models
 {
-    public class CrowdFundingDbContext : DbContext
+    public class CrowdFundingDbContext : IdentityDbContext<User>
     {
         public CrowdFundingDbContext(DbContextOptions<CrowdFundingDbContext> options) : base(options) { }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Project> Projects { get; set; }
-        public DbSet<Contribution> Contributions { get; set; }
-        public DbSet<Reward> Rewards { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<UserReward> UserRewards { get; set; }
+        public DbSet<User>? Users { get; set; }
+        public DbSet<Project>? Projects { get; set; }
+        public DbSet<Contribution>? Contributions { get; set; }
+        public DbSet<Reward>? Rewards { get; set; }
+        public DbSet<Category>? Categories { get; set; }
+        public DbSet<UserReward>? UserRewards { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<User>()
+                .HasDiscriminator<string>("Discriminator")
+                .HasValue<User>("User");
 
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Projects)
@@ -29,6 +35,21 @@ namespace CrowdFundingApp.Models
             modelBuilder.Entity<User>()
                 .HasMany(u => u.UserRewards)
                 .WithOne(ur => ur.User)
+                .HasForeignKey(ur => ur.UserId);
+
+            modelBuilder.Entity<Project>()
+            .HasOne(p => p.User)
+            .WithMany(u => u.Projects)
+            .HasForeignKey(p => p.UserId);
+
+            modelBuilder.Entity<Contribution>()
+                .HasOne(c => c.User)
+                .WithMany(u => u.Contributions)
+                .HasForeignKey(c => c.UserId);
+
+            modelBuilder.Entity<UserReward>()
+                .HasOne(ur => ur.User)
+                .WithMany(u => u.UserRewards)
                 .HasForeignKey(ur => ur.UserId);
 
             modelBuilder.Entity<Project>()

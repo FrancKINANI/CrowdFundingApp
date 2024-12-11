@@ -13,7 +13,7 @@
 <h2 class="text-center">List of projects</h2>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary mb-3">Create a new project</a>
+    <a asp-controller="Project" asp-action="Create" class="btn btn-primary mb-3">Create a new project</a>
 </p>
 <table class="table">
     <thead>
@@ -39,12 +39,11 @@
                 <td>@project.CurrentAmount</td>
                 <td>@project.StartDate.ToString("yyyy-MM-dd")</td>
                 <td>@project.EndDate.ToString("yyyy-MM-dd")</td>
-                <td>@project.User.Username</td>
+                <td>@project.User.UserName</td>
                 <td>@project.Category.Name</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@project.ProjectId" class="btn btn-info">Details</a> |
-                    <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-warning">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@project.ProjectId" class="btn btn-danger">Delete</a>
+                    <a asp-controller="Contribution" asp-action="Create" asp-route-id="@project.ProjectId" class="btn btn-warning">Contribute</a>
                 </td>
             </tr>
         }

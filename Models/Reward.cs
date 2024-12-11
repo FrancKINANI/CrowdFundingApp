@@ -11,15 +11,15 @@ namespace CrowdFundingApp.Models
         public int RewardId { get; set; }
 
         [Required]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required]
         public double MinimumContribution { get; set; }
 
         [ForeignKey("Project")]
         public int ProjectId { get; set; }
-        public Project Project { get; set; }
+        public Project? Project { get; set; }
 
-        public List<UserReward> UserRewards { get; set; }
+        public List<UserReward>? UserRewards { get; set; }
     }
 }

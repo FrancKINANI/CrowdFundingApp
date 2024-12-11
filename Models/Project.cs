@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace CrowdFundingApp.Models
 {
@@ -10,10 +11,10 @@ namespace CrowdFundingApp.Models
 
         [Required]
         [StringLength(100)]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [Required]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required]
         public double GoalAmount { get; set; }
@@ -26,16 +27,16 @@ namespace CrowdFundingApp.Models
 
 
         [ForeignKey("User")]
-        public int UserId { get; set; }
-        public User User { get; set; }
+        public string? UserId { get; set; }
+        public User? User { get; set; }
+
 
         [ForeignKey("Category")]
-
         public int CategoryId { get; set; }
-        public Category Category { get; set; }
+        public Category? Category { get; set; }
 
-        public List<Contribution> Contributions { get; set; }
-        public List<Reward> Rewards { get; set; }
+        public List<Contribution>? Contributions { get; set; }
+        public List<Reward>? Rewards { get; set; }
     }
 
 }

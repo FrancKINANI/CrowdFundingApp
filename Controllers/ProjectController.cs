@@ -5,9 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CrowdFundingApp.Controllers
 {
+    //[Authorize(Roles = "Admin, User")]
     public class ProjectController : Controller
     {
         public CrowdFundingDbContext _context { get; set; }
@@ -32,7 +34,7 @@ namespace CrowdFundingApp.Controllers
         // GET: ProjectController/Create
         public ActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "Username");
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name");
             return View();
         }
@@ -45,9 +47,9 @@ namespace CrowdFundingApp.Controllers
             try
             {
                 _context.Projects.Add(project);        
-                ViewData["UserId"] = new SelectList(_context.Users, "UserId", "Username", project.UserId);
+                ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", project.UserId);
                 ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", project.CategoryId);
-                _context.SaveChangesAsync();
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             catch

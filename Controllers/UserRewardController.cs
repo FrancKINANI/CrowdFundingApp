@@ -1,4 +1,5 @@
 ﻿using CrowdFundingApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CrowdFundingApp.Controllers
 {
+    //[Authorize(Roles = "Admin, User")]
     public class UserRewardController : Controller
     {
         public CrowdFundingDbContext _context { get; set; }
@@ -30,7 +32,7 @@ namespace CrowdFundingApp.Controllers
         // GET: UserRewardController/Create
         public ActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "Username");
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
             ViewData["RewardId"] = new SelectList(_context.Rewards.Include(r => r.Project), "RewardId", "Description");
             return View();
         }
@@ -43,7 +45,7 @@ namespace CrowdFundingApp.Controllers
             try
             {             
                 _context.UserRewards.Add(userReward);
-                ViewData["UserId"] = new SelectList(_context.Users, "UserId", "Username", userReward.UserId);
+                ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", userReward.UserId);
                 ViewData["RewardId"] = new SelectList(_context.Rewards.Include(r => r.Project), "RewardId", "Description", userReward.RewardId);
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Index));

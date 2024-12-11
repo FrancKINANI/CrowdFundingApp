@@ -1,8 +1,58 @@
-﻿@{
+﻿@model List<Project>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h2 class="text-center">Welcome to IdeaNest</h2>
+
+@if (User.IsInRole("Admin"))
+{
+    <p>You are logged in as administrator. <a asp-controller="Dashboard" asp-action="AdminDashboard">Go to admin dashboard</a>.</p>
+}
+else if (User.Identity.IsAuthenticated)
+{
+    <p>You are logged in as standard user. <a asp-controller="Dashboard" asp-action="UserDashboard">Go to your dashboard</a>.</p>
+}
+else
+{
+    <p class="text-center"><a asp-controller="Account" asp-action="Login">Login</a> or <a asp-controller="Account" asp-action="Register">Register</a> to access all features.</p>
+
+    <div class="container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Goal</th>
+                    <th>Current Amount</th>
+                    <th>Start date</th>
+                    <th>End date</th>
+                    <th>Creator</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var project in Model)
+                {
+                    <tr>
+                        <td>@project.Title</td>
+                        <td>@project.Description</td>
+                        <td>@project.GoalAmount</td>
+                        <td>@project.CurrentAmount</td>
+                        <td>@project.StartDate.ToString("yyyy-MM-dd")</td>
+                        <td>@project.EndDate.ToString("yyyy-MM-dd")</td>
+                        <td>@project.User.UserName</td>
+                        <td>@project.Category.Name</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@project.ProjectId" class="btn btn-info">Details</a> |
+                            <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-warning">Edit</a> |
+                            <a asp-action="Delete" asp-route-id="@project.ProjectId" class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,36 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model CrowdFundingApp.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2>Admin Dashboard</h2>
+
+<h3>List od users</h3>
+<ul>
+    @foreach (var user in Model.Users)
+    {
+        <li>@user.UserName - @user.Email</li>
+    }
+</ul>
+
+<h3>Awards given</h3>
+<ul>
+    @foreach (var userReward in Model.UserRewards)
+    {
+        <li>@userReward.User.UserName - @userReward.Reward.Description</li>
+    }
+</ul>
+
+<h3>Projects</h3>
+<ul>
+    @foreach (var project in Model.Projects)
+    {
+        <li>@project.Title - @project.CurrentAmount / @project.GoalAmount</li>
+    }
+</ul>

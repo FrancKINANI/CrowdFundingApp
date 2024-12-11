@@ -1,0 +1,96 @@
+﻿@model CrowdFundingApp.ViewModels.UserDashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2 class="text-center">Dashboard</h2>
+
+<h3 class="text-center">Your projects</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Goal</th>
+            <th>Current Amount</th>
+            <th>Start date</th>
+            <th>End date</th>
+            <th>Category</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var project in Model.Projects)
+        {
+            <tr>
+                <td>@project.Title</td>
+                <td>@project.Description</td>
+                <td>@project.GoalAmount</td>
+                <td>@project.CurrentAmount</td>
+                <td>@project.StartDate.ToString("yyyy-MM-dd")</td>
+                <td>@project.EndDate.ToString("yyyy-MM-dd")</td>
+                <td>@project.Category.Name</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@project.ProjectId" class="btn btn-info">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-warning">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@project.ProjectId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Your Contributions</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Contribution amount</th>
+            <th>Date</th>
+            <th>Project</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var contribution in Model.Contributions)
+        {
+            <tr>
+                <td>$ @contribution.Amount</td>
+                <td>@contribution.ContributionDate.ToString("yyyy-MM-dd")</td>
+                <td>@contribution.Project.Title</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@contribution.ContributionId" class="btn btn-info">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@contribution.ContributionId" class="btn btn-warning">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@contribution.ContributionId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<h3>Your rewards</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Reward</th>
+            <th>Project</th>
+            <th>Grant date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var userReward in Model.UserRewards)
+        {
+            <tr>
+                <td>@userReward.Reward.Description</td>
+                <td>@userReward.Reward.Project.Title</td>
+                <td>@userReward.DateAwarded.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@userReward.UserRewardId" class="btn btn-info">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
