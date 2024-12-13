@@ -4,6 +4,7 @@ using CrowdFundingApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrowdFundingApp.Migrations
 {
     [DbContext(typeof(CrowdFundingDbContext))]
-    partial class CrowdFundingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241211191210_AddAtributNameReward")]
+    partial class AddAtributNameReward
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,7 +44,7 @@ namespace CrowdFundingApp.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("CrowdFundingApp.Models.Contribution", b =>
@@ -70,7 +73,7 @@ namespace CrowdFundingApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Contributions", (string)null);
+                    b.ToTable("Contributions");
                 });
 
             modelBuilder.Entity("CrowdFundingApp.Models.Project", b =>
@@ -114,7 +117,7 @@ namespace CrowdFundingApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Projects", (string)null);
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("CrowdFundingApp.Models.Reward", b =>
@@ -144,7 +147,7 @@ namespace CrowdFundingApp.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Rewards", (string)null);
+                    b.ToTable("Rewards");
                 });
 
             modelBuilder.Entity("CrowdFundingApp.Models.User", b =>
@@ -245,7 +248,7 @@ namespace CrowdFundingApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRewards", (string)null);
+                    b.ToTable("UserRewards");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -408,8 +411,7 @@ namespace CrowdFundingApp.Migrations
 
                     b.HasOne("CrowdFundingApp.Models.User", "User")
                         .WithMany("Projects")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Category");
 

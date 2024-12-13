@@ -18,6 +18,7 @@
 <table class="table">
     <thead>
         <tr>
+            <th>Name</th>
             <th>Description</th>
             <th>Minimum contribution amount</th>
             <th>Project</th>
@@ -28,6 +29,7 @@
     @foreach (var reward in Model)
     {
         <tr>
+            <td>@reward.Name</td>
             <td>@reward.Description</td>
             <td>$ @reward.MinimumContribution</td>
             <td>@reward.Project.Title</td>

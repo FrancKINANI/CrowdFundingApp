@@ -1,0 +1,23 @@
+﻿@model IEnumerable<Contribution>
+
+<h2 class="text-center">Mes Contributions</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Project</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var contribution in Model)
+        {
+            <tr>
+                <td>@contribution.Amount</td>
+                <td>@contribution.ContributionDate</td>
+                <td>@contribution.Project?.Title</td>
+            </tr>
+        }
+    </tbody>
+</table>

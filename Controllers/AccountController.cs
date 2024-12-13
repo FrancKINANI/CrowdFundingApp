@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CrowdFundingApp.Controllers
 {
-    //[Authorize]
     public class AccountController : Controller
     {
         private readonly UserManager<User> _userManager;
@@ -72,8 +71,7 @@ namespace CrowdFundingApp.Controllers
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation("User created a new account with password.");
-
-                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    await _userManager.AddToRoleAsync(user, "User");
                     return LocalRedirect(returnUrl);
                     //return RedirectToAction("Index", "Home");
                 }
@@ -92,6 +90,10 @@ namespace CrowdFundingApp.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+            }
             _logger.LogInformation("User logged out.");
             return RedirectToAction("Index", "Home");
         }

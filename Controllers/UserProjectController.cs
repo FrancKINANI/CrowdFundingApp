@@ -1,61 +1,63 @@
 ﻿using CrowdFundingApp.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace CrowdFundingApp.Controllers
 {
-    [Authorize(Roles = "Admin, User")]
-    public class ProjectController : Controller
+    [Authorize(Roles ="User")]
+    public class UserProjectController : Controller
     {
-        public CrowdFundingDbContext _context { get; set; }
-        public ProjectController(CrowdFundingDbContext context)
+        public readonly CrowdFundingDbContext _context;
+        private readonly UserManager<User> _userManager;
+        public UserProjectController(CrowdFundingDbContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
-
-       // GET: ProjectController
-       public async Task<ActionResult> Index()
-       {
+        // GET: UserProjectConsoller
+        public async Task<ActionResult> Index()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var projects = await _context.Projects
-                .Include(p => p.User)
-                .Include(p => p.Category)
+                .Where(c => c.UserId == userId)
                 .ToListAsync();
             return View(projects);
-       }
+        }
 
-
-        // GET: ProjectController/Details/5
+        // GET: UserProjectConsoller/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: ProjectController/Create
+        // GET: UserProjectConsoller/Create
         public ActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name");
             return View();
         }
 
-        // POST: ProjectController/Create
+        // POST: UserProjectConsoller/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("ProjectId,Title,Description,GoalAmount,CurrentAmount,StartDate,EndDate,UserId,CategoryId")] Project project)
+        public async Task<ActionResult> Create(Project project)
         {
             try
             {
-                _context.Projects.Add(project);        
-                ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", project.UserId);
-                ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", project.CategoryId);
-                _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    project.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    _context.Projects.Add(project);
+                    ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Name", project.CategoryId);
+                    await _context.SaveChangesAsync();
+                    return View();
+                }
+                return View(project);
             }
             catch
             {
@@ -63,13 +65,13 @@ namespace CrowdFundingApp.Controllers
             }
         }
 
-        // GET: ProjectController/Edit/5
+        // GET: UserProjectConsoller/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: ProjectController/Edit/5
+        // POST: UserProjectConsoller/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -84,13 +86,13 @@ namespace CrowdFundingApp.Controllers
             }
         }
 
-        // GET: ProjectController/Delete/5
+        // GET: UserProjectConsoller/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: ProjectController/Delete/5
+        // POST: UserProjectConsoller/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

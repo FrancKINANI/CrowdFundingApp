@@ -8,17 +8,17 @@
 
 @if (User.IsInRole("Admin"))
 {
-    <p>You are logged in as administrator. <a asp-controller="Dashboard" asp-action="AdminDashboard">Go to admin dashboard</a>.</p>
+    <p class="text-align">You are logged in as administrator. <a asp-controller="Dashboard" asp-action="AdminDashboard">Go to admin dashboard</a>.</p>
 }
 else if (User.Identity.IsAuthenticated)
 {
-    <p>You are logged in as standard user. <a asp-controller="Dashboard" asp-action="UserDashboard">Go to your dashboard</a>.</p>
+    <p class="text-align">You are logged in as standard user. <a asp-controller="Dashboard" asp-action="UserDashboard">Go to your dashboard</a>.</p>
 }
 else
 {
     <p class="text-center"><a asp-controller="Account" asp-action="Login">Login</a> or <a asp-controller="Account" asp-action="Register">Register</a> to access all features.</p>
 
-    <div class="container">
+    <div>
         <table class="table">
             <thead>
                 <tr>
@@ -43,12 +43,11 @@ else
                         <td>@project.CurrentAmount</td>
                         <td>@project.StartDate.ToString("yyyy-MM-dd")</td>
                         <td>@project.EndDate.ToString("yyyy-MM-dd")</td>
-                        <td>@project.User.UserName</td>
-                        <td>@project.Category.Name</td>
+                        <td>@project.User?.UserName ?? "Not defined"</td>
+                        <td>@project.Category?.Name ?? "Not defined"</td>
                         <td>
                             <a asp-action="Details" asp-route-id="@project.ProjectId" class="btn btn-info">Details</a> |
-                            <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-warning">Edit</a> |
-                            <a asp-action="Delete" asp-route-id="@project.ProjectId" class="btn btn-danger">Delete</a>
+                            <a asp-controller="UserContribution" asp-action="Create" asp-route-id="@project.ProjectId" class="btn btn-warning">Contribute</a>
                         </td>
                     </tr>
                 }

@@ -9,6 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CrowdFundingDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CrowdFundingConnection")));
 
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
+    options.Secure = CookieSecurePolicy.None;
+});
+
 // Setting up cookie authentication
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -16,7 +22,6 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LogoutPath = "/Account/Logout"; 
     options.AccessDeniedPath = "/Account/AccessDenied";
 });
-
 
 // Configuration of the identity
 builder.Services.AddIdentity<User, IdentityRole>(options =>
@@ -28,6 +33,15 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 })
     .AddEntityFrameworkStores<CrowdFundingDbContext>()
     .AddDefaultTokenProviders();
+
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    options.SlidingExpiration = false;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.Expiration = null;
+});
 
 builder.Services.AddControllersWithViews();
 
@@ -90,7 +104,7 @@ async Task InitializeRoles(IServiceProvider serviceProvider)
             Email = "admin@crowdfunding.com",
             EmailConfirmed = true
         };
-        var result = await userManager.CreateAsync(admin, "Admin123!");
+        var result = await userManager.CreateAsync(admin, "Admin1234!");
         if (result.Succeeded)
         {
             await userManager.AddToRoleAsync(admin, "Admin");

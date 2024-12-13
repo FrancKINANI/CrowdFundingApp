@@ -38,18 +38,15 @@
         <span asp-validation-for="EndDate" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="UserId" class="control-label">Creator</label>
-        <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
-        <span asp-validation-for="UserId" class="text-danger"></span>
-    </div>
-    <div class="form-group">
         <label asp-for="CategoryId" class="control-label">Category</label>
         <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
         <span asp-validation-for="CategoryId" class="text-danger"></span>
     </div>
+
+    <input type="hidden" asp-for="UserId" />
     <div class="form-group">
-        <input type="submit" asp-controller="Project" value="Create" class="btn btn-primary" />
+        <button type="submit" class="btn btn-primary">Create</button>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
     </div>
 </form>
 
-<a asp-action="Index" class="btn btn-primary mb-3">Back to the list</a>

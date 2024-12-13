@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CrowdFundingApp.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, User")]
     public class ContributionController : Controller
     {
         private CrowdFundingDbContext _context;

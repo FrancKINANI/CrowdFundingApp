@@ -9,7 +9,9 @@ namespace CrowdFundingApp.Models
     {
         [Key]
         public int RewardId { get; set; }
-
+        [Required]
+        [StringLength(100)]
+        public string Name {  get; set; }
         [Required]
         public string? Description { get; set; }
 

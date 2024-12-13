@@ -38,9 +38,16 @@ namespace CrowdFundingApp.Models
                 .HasForeignKey(ur => ur.UserId);
 
             modelBuilder.Entity<Project>()
-            .HasOne(p => p.User)
-            .WithMany(u => u.Projects)
-            .HasForeignKey(p => p.UserId);
+                .HasOne(p => p.User)
+                .WithMany(u => u.Projects)
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Project>()
+                .HasOne(p => p.Category)
+                .WithMany(c => c.Projects)
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Contribution>()
                 .HasOne(c => c.User)

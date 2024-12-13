@@ -1,0 +1,21 @@
+﻿@model IEnumerable<UserReward>
+
+<h2>Mes Récompenses</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Récompense</th>
+            <th>Date Attribuée</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var reward in Model)
+        {
+            <tr>
+                <td>@reward.Reward?.Name</td>
+                <td>@reward.DateAwarded</td>
+            </tr>
+        }
+    </tbody>
+</table>

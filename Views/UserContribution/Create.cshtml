@@ -1,0 +1,21 @@
+﻿@model Contribution
+
+<h2 class="text-center">Contribute to Project</h2>
+
+<form asp-controller="UserContribution" asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Amount" class="control-label"></label>
+        <input asp-for="Amount" class="form-control" />
+        <span asp-validation-for="Amount" class="text-danger"></span>
+    </div>
+    <input type="hidden" asp-for="ProjectId" />
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Contribute</button>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</form>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

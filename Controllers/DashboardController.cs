@@ -9,7 +9,7 @@ using CrowdFundingApp.ViewModels;
 
 namespace CrowdFundingApp.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class DashboardController : Controller
     {
         private readonly CrowdFundingDbContext _context;
