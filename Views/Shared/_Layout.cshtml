@@ -29,10 +29,9 @@
                             <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Reward" asp-action="Index">Rewards</a></li>
                             <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Dashboard" asp-action="AdminDashboard">AdminDashboard</a></li>                        
                         }
-                        @if (User.Identity.IsAuthenticated)
+                        else if (User.IsInRole("User"))
                         {
-                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="Dashboard" asp-action="UserDashboard">UserDashboard</a></li>
-
+                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="Dashboard" asp-action="UserDashboard">UserDashboard</a></li>                                             
                         }
                         else
                         {

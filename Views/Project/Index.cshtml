@@ -12,6 +12,12 @@
         <a asp-controller="Project" asp-action="Create" class="btn btn-primary mb-3">Create a new project</a>
     </p>
 }
+else if(User.IsInRole("User")){
+    <p>
+        <a asp-controller="UserProject" asp-action="Create" class="btn btn-primary mb-3">Create a new project</a>
+    </p>
+}
+
 <table class="table">
     <thead>
         <tr>
