@@ -20,28 +20,18 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Project" asp-action="Index">Projects</a></li>
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Users</a></li>
                             <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="UserReward" asp-action="Index">Rewards given</a></li>
                             <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Contribution" asp-action="Index">Contributions</a></li>
                             <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Reward" asp-action="Index">Rewards</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Dashboard" asp-action="AdminDashboard">Dashboard</a></li>
-                            <li class="nav-item">
-                                <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
-                                    <button type="submit" class="nav-link text-dark" style="border:none; background:none;">Logout</button>
-                                </form>
-                            </li>
+                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Dashboard" asp-action="AdminDashboard">AdminDashboard</a></li>                        
                         }
-                        <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Project" asp-action="Index">Projects</a></li>
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="Dashboard" asp-action="UserDashboard">Dashboard</a></li>
-                            <li class="nav-item">
-                                <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
-                                    <button type="submit" class="nav-link text-dark" style="border:none; background:none;">Logout</button>
-                                </form>
-                            </li>
+                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="Dashboard" asp-action="UserDashboard">UserDashboard</a></li>
 
                         }
                         else
@@ -49,6 +39,11 @@
                             <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a></li>
                             <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Registration</a></li>
                         }
+                        <li class="nav-item">
+                            <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
+                                <button type="submit" class="nav-link text-dark" style="border:none; background:none;">Logout</button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -68,11 +63,11 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script>
-        window.addEventListener("beforeunload", function () {
-            navigator.sendBeacon('/Account/Logout');
-        });
-    </script>
+    @* <script> *@
+    @*     window.addEventListener("beforeunload", function () { *@
+    @*         navigator.sendBeacon('/Account/Logout'); *@
+    @*     }); *@
+    @* </script> *@
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

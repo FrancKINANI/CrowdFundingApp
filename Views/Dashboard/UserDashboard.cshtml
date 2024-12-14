@@ -30,7 +30,7 @@
                 <td>@project.CurrentAmount</td>
                 <td>@project.StartDate.ToString("yyyy-MM-dd")</td>
                 <td>@project.EndDate.ToString("yyyy-MM-dd")</td>
-                <td>@project.Category.Name</td>
+                <td>@project.Category?.Name</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@project.ProjectId" class="btn btn-info">Details</a> |
                     <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-warning">Edit</a> |

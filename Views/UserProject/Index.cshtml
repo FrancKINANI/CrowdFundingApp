@@ -6,12 +6,6 @@
 
 <h2 class="text-center">List of projects</h2>
 
-@if (User.IsInRole("Admin"))
-{
-    <p>
-        <a asp-controller="Project" asp-action="Create" class="btn btn-primary mb-3">Create a new project</a>
-    </p>
-}
 @if (User.Identity.IsAuthenticated)
 {
     <p>

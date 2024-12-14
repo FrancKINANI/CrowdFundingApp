@@ -43,21 +43,23 @@ namespace CrowdFundingApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AdminDashboard()
+        public IActionResult AdminDashboard()
         {
-            var users = await _context.Users.ToListAsync();
-            var projects = await _context.Projects.ToListAsync();
-            var contributions = await _context.Contributions.ToListAsync();
-            var userRewards = await _context.UserRewards
+            var users = _context.Users.ToList();
+            var projects = _context.Projects.ToList();
+            var contributions = _context.Contributions.ToList();
+            var rewards = _context.Rewards.ToList();
+            var userRewards = _context.UserRewards
                 .Include(ur => ur.User)
                 .Include(ur => ur.Reward)
-                .ToListAsync();
+                .ToList();
 
             var viewModel = new AdminDashboardViewModel
             {
                 Users = users,
                 Projects = projects,
-                Rewards = (IEnumerable<Reward>)userRewards,
+                UserRewards = userRewards,
+                Rewards = rewards,
                 Contributions = contributions
             };
 
