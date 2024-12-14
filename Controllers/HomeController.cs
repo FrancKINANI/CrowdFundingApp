@@ -17,10 +17,12 @@ namespace CrowdFundingApp.Controllers
 
         public async Task<IActionResult> Index()
         {
+#pragma warning disable CS8604 // Possible null reference argument.
             var projects = await _context.Projects
                                 .Include(p => p.User)
                                 .Include(p => p.Category)
                                 .Where(p => p.User != null && p.Category != null).ToListAsync();
+#pragma warning restore CS8604 // Possible null reference argument.
             return View(projects);
         }
 
@@ -28,10 +30,12 @@ namespace CrowdFundingApp.Controllers
         [Authorize]
         public async Task<IActionResult> Details(int id)
         {
+#pragma warning disable CS8604 // Possible null reference argument.
             var project = await _context.Projects
                 .Include(p => p.Category)
                 .Include(p => p.User)
                 .FirstOrDefaultAsync(p => p.ProjectId == id);
+#pragma warning restore CS8604 // Possible null reference argument.
             if (project == null)
             {
                 return NotFound();

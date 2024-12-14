@@ -10,7 +10,7 @@
 {
     <p class="text-align">You are logged in as administrator. <a asp-controller="Dashboard" asp-action="AdminDashboard">Go to admin dashboard</a>.</p>
 }
-else if (User.Identity.IsAuthenticated)
+else if (User.IsInRole("User"))
 {
     <p class="text-align">You are logged in as standard user. <a asp-controller="Dashboard" asp-action="UserDashboard">Go to your dashboard</a>.</p>
 }
@@ -43,10 +43,10 @@ else
                         <td>@project.CurrentAmount</td>
                         <td>@project.StartDate.ToString("yyyy-MM-dd")</td>
                         <td>@project.EndDate.ToString("yyyy-MM-dd")</td>
-                        <td>@project.User?.UserName ?? "Not defined"</td>
-                        <td>@project.Category?.Name ?? "Not defined"</td>
+                        <td>@project.User?.UserName</td>
+                        <td>@project.Category?.Name</td>
                         <td>
-                            <a asp-action="Details" asp-route-id="@project.ProjectId" class="btn btn-info">Details</a> |
+                            <a asp-controller="Project" asp-action="Details" asp-route-id="@project.ProjectId" class="btn btn-info">Details</a> |
                             <a asp-controller="UserContribution" asp-action="Create" asp-route-id="@project.ProjectId" class="btn btn-warning">Contribute</a>
                         </td>
                     </tr>

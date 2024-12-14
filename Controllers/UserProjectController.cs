@@ -27,10 +27,12 @@ namespace CrowdFundingApp.Controllers
             //    .Where(c => c.UserId == userId)
             //    .ToListAsync();
             //return View(projects);
+#pragma warning disable CS8604 // Possible null reference argument.
             var projects = await _context.Projects
                 .Include(p => p.User)
                 .Include(p => p.Category)
                 .ToListAsync();
+#pragma warning restore CS8604 // Possible null reference argument.
             return View(projects);
         }
 
@@ -57,7 +59,9 @@ namespace CrowdFundingApp.Controllers
                 if (ModelState.IsValid)
                 {
                     project.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                     _context.Projects.Add(project);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Name", project.CategoryId);
                     await _context.SaveChangesAsync();
                     return View();

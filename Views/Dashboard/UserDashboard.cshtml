@@ -6,7 +6,7 @@
 
 <h2 class="text-center">Dashboard</h2>
 
-<h3 class="text-center">Your projects</h3>
+<h3>Your projects</h3>
 <table class="table">
     <thead>
         <tr>
@@ -57,11 +57,11 @@
             <tr>
                 <td>$ @contribution.Amount</td>
                 <td>@contribution.ContributionDate.ToString("yyyy-MM-dd")</td>
-                <td>@contribution.Project.Title</td>
+                <td>@contribution?.Project.Title</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@contribution.ContributionId" class="btn btn-info">Details</a> |
-                    <a asp-action="Edit" asp-route-id="@contribution.ContributionId" class="btn btn-warning">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@contribution.ContributionId" class="btn btn-danger">Delete</a>
+                    <a asp-action="Details" asp-route-id="@contribution?.ContributionId" class="btn btn-info">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@contribution?.ContributionId" class="btn btn-warning">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@contribution?.ContributionId" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }
@@ -83,11 +83,11 @@
         @foreach (var userReward in Model.UserRewards)
         {
             <tr>
-                <td>@userReward.Reward.Description</td>
-                <td>@userReward.Reward.Project.Title</td>
-                <td>@userReward.DateAwarded.ToString("yyyy-MM-dd")</td>
+                <td>@userReward?.Reward?.Description</td>
+                <td>@userReward?.Reward?.Project?.Title</td>
+                <td>@userReward?.DateAwarded.ToString("yyyy-MM-dd")</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@userReward.UserRewardId" class="btn btn-info">Details</a>
+                    <a asp-action="Details" asp-route-id="@userReward?.UserRewardId" class="btn btn-info">Details</a>
                 </td>
             </tr>
         }

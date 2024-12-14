@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace CrowdFundingApp.Controllers
 {
-    //[Authorize(Roles ="Admin, User")]
+    [Authorize(Roles = "Admin, User")]
     public class UserContributionController : Controller
     {
         public readonly CrowdFundingDbContext _context;
@@ -24,10 +24,12 @@ namespace CrowdFundingApp.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+#pragma warning disable CS8604 // Possible null reference argument.
             var userContributions = await _context.Contributions
                 .Where(c => c.UserId == userId)
                 .Include(c => c.Project)
                 .ToListAsync();
+#pragma warning restore CS8604 // Possible null reference argument.
             return View(userContributions);
         }
 
@@ -40,11 +42,15 @@ namespace CrowdFundingApp.Controllers
         // GET: UserContributionController/Create
         public ActionResult Create(int projectId)
         {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             var project =  _context.Projects.FindAsync(projectId);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             if (project == null)
             {
                 return NotFound();
             }
+#pragma warning restore CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
 
             var contribution = new Contribution
             {
@@ -60,22 +66,19 @@ namespace CrowdFundingApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Contribution contribution)
         {
-            Console.WriteLine("Méthode POST appelée");
             try
             {
                 if (ModelState.IsValid)
                 {
                     contribution.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                     contribution.ContributionDate = DateTime.Now;
-                    //contribution.ProjectId = 11;
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                     _context.Contributions.Add(contribution);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     await _context.SaveChangesAsync();
-                    Console.WriteLine("Contribution enregistrée avec succès.");
                     return RedirectToAction("Index", "Project");
                 }
-
-                Console.WriteLine("ModelState invalide");
                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
                 {
                     Console.WriteLine(error.ErrorMessage);

@@ -1,0 +1,26 @@
+﻿@model Contribution
+
+@{
+    ViewData["Title"] = "Details of the Contribution";
+}
+
+<h2>Details of the Contribution</h2>
+
+<div>
+    <h4>Contribution</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Amount</dt>
+        <dd class="col-sm-10">@Model.Amount</dd>
+        <dt class="col-sm-2">Date of contribution</dt>
+        <dd class="col-sm-10">@Model.ContributionDate.ToString("yyyy-MM-dd")</dd>
+        <dt class="col-sm-2">Username</dt>
+        <dd class="col-sm-10">@Model.User?.UserName</dd>
+        <dt class="col-sm-2">Project</dt>
+        <dd class="col-sm-10">@Model.Project?.Title</dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ContributionId" class="btn btn-sm">Edit</a> |
+    <a asp-action="Index" class="btn btn-sm">Retour à la liste</a>
+</div>

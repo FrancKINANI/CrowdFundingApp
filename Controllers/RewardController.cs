@@ -19,14 +19,31 @@ namespace CrowdFundingApp.Controllers
         // GET: RewardController
         public ActionResult Index()
         {
+#pragma warning disable CS8604 // Possible null reference argument.
             var rewards = _context.Rewards.Include(p => p.Project).ToList();
+#pragma warning restore CS8604 // Possible null reference argument.
             return View(rewards);
         }
 
         // GET: RewardController/Details/5
-        public ActionResult Details(int id)
+        public async Task<IActionResult> Details(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+#pragma warning disable CS8604 // Possible null reference argument.
+            var reward = await _context.Rewards
+                .Include(r => r.Project)
+                .FirstOrDefaultAsync(m => m.RewardId == id);
+#pragma warning restore CS8604 // Possible null reference argument.
+            if (reward == null)
+            {
+                return NotFound();
+            }
+
+            return View(reward);
         }
 
         // GET: RewardController/Create
@@ -55,45 +72,99 @@ namespace CrowdFundingApp.Controllers
         }
 
         // GET: RewardController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var reward = await _context.Rewards.FindAsync(id);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            if (reward == null)
+            {
+                return NotFound();
+            }
+            ViewData["ProjectId"] = new SelectList(_context.Projects, "ProjectId", "Title", reward.ProjectId);
+            return View(reward);
         }
 
         // POST: RewardController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(int id, [Bind("RewardId,Description,MinimumContribution,ProjectId")] Reward reward)
         {
-            try
+            if (id != reward.RewardId)
             {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(reward);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!RewardExists(reward.RewardId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            ViewData["ProjectId"] = new SelectList(_context.Projects, "ProjectId", "Title", reward.ProjectId);
+            return View(reward);
         }
 
         // GET: RewardController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+#pragma warning disable CS8604 // Possible null reference argument.
+            var reward = await _context.Rewards
+                .Include(r => r.Project)
+                .FirstOrDefaultAsync(m => m.RewardId == id);
+#pragma warning restore CS8604 // Possible null reference argument.
+            if (reward == null)
+            {
+                return NotFound();
+            }
+
+            return View(reward);
         }
 
         // POST: RewardController/Delete/5
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var reward = await _context.Rewards.FindAsync(id);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8604 // Possible null reference argument.
+            _context.Rewards.Remove(reward);
+#pragma warning restore CS8604 // Possible null reference argument.
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool RewardExists(int id)
+        {
+#pragma warning disable CS8604 // Possible null reference argument.
+            return _context.Rewards.Any(e => e.RewardId == id);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
     }
 }

@@ -18,7 +18,9 @@ namespace CrowdFundingApp.Controllers
         // GET: CategoryController
         public ActionResult Index()
         {
+#pragma warning disable CS8604 // Possible null reference argument.
             List<Category> categories = _context.Categories.ToList();
+#pragma warning restore CS8604 // Possible null reference argument.
             return View(categories);
         }
 
@@ -41,7 +43,9 @@ namespace CrowdFundingApp.Controllers
         {
             try
             {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 _context.Categories.Add(category);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
@@ -94,3 +98,4 @@ namespace CrowdFundingApp.Controllers
         }
     }
 }
+    
