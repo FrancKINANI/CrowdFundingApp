@@ -77,7 +77,7 @@ namespace CrowdFundingApp.Controllers
                     _context.Contributions.Add(contribution);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
                     await _context.SaveChangesAsync();
-                    return RedirectToAction("Index", "Project");
+                    return RedirectToAction("Index", "UserProject");
                 }
                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
                 {
@@ -93,45 +93,106 @@ namespace CrowdFundingApp.Controllers
         }
 
         // GET: UserContributionController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+#pragma warning disable CS8602 // Possible null reference argument.
+            var contribution = await _context.Contributions.FindAsync(id);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            if (contribution == null)
+            {
+                return NotFound();
+            }
+            return View(contribution);
         }
 
         // POST: UserContributionController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(int id, [Bind("ContributionId, Amount")] Contribution contribution)
         {
-            try
+            if (id != contribution.ContributionId)
             {
-                return RedirectToAction(nameof(Index));
+                return NotFound(); 
             }
-            catch
+
+            if (ModelState.IsValid)
             {
-                return View();
+                try
+                {
+                    var existingContribution = await _context.Contributions.FindAsync(id);
+                    if (existingContribution == null)
+                    {
+                        return NotFound();
+                    }
+
+                    existingContribution.Amount = contribution.Amount;
+
+                    _context.Update(existingContribution);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ContributionExists(contribution.ContributionId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
             }
+
+            return View(contribution);
         }
 
         // GET: UserContributionController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+#pragma warning disable CS8604 // Possible null reference argument.
+            var contribution = await _context.Contributions
+                .Include(c => c.Project)
+                .FirstOrDefaultAsync(m => m.ContributionId == id);
+#pragma warning restore CS8604 // Possible null reference argument.
+            if (contribution == null)
+            {
+                return NotFound();
+            }
+
+            return View(contribution);
         }
 
         // POST: UserContributionController/Delete/5
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var contribution = await _context.Contributions.FindAsync(id);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8604 // Possible null reference argument.
+            _context.Contributions.Remove(contribution);
+#pragma warning restore CS8604 // Possible null reference argument.
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool ContributionExists(int id)
+        {
+#pragma warning disable CS8604 // Possible null reference argument.
+            return _context.Contributions.Any(e => e.ContributionId == id);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
     }
 }

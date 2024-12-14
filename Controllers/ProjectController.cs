@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CrowdFundingApp.Controllers
 {
-    [Authorize(Roles = "Admin, User")]
+    [Authorize(Roles = "Admin")]
     public class ProjectController : Controller
     {
         public CrowdFundingDbContext _context { get; set; }

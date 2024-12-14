@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CrowdFundingApp.Controllers
 {
-    [Authorize(Roles = "Admin, User")]
+    [Authorize(Roles = "Admin")]
     public class ContributionController : Controller
     {
         private CrowdFundingDbContext _context;
@@ -109,6 +109,7 @@ namespace CrowdFundingApp.Controllers
             {
                 try
                 {
+                    contribution.ContributionDate = DateTime.Now;
                     _context.Update(contribution);
                     await _context.SaveChangesAsync();
                 }
