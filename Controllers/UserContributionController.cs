@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace CrowdFundingApp.Controllers
 {
-    [Authorize(Roles ="Admin, User")]
+    //[Authorize(Roles ="Admin, User")]
     public class UserContributionController : Controller
     {
         public readonly CrowdFundingDbContext _context;
@@ -38,7 +38,6 @@ namespace CrowdFundingApp.Controllers
         }
 
         // GET: UserContributionController/Create
-        [HttpGet]
         public ActionResult Create(int projectId)
         {
             var project =  _context.Projects.FindAsync(projectId);
@@ -51,6 +50,7 @@ namespace CrowdFundingApp.Controllers
             {
                 ProjectId = projectId
             };
+            //ViewBag.ProjectId = projectId;
 
             return View(contribution);
         }
@@ -67,11 +67,12 @@ namespace CrowdFundingApp.Controllers
                 {
                     contribution.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                     contribution.ContributionDate = DateTime.Now;
+                    //contribution.ProjectId = 11;
 
                     _context.Contributions.Add(contribution);
                     await _context.SaveChangesAsync();
                     Console.WriteLine("Contribution enregistrée avec succès.");
-                    return RedirectToAction("Index", "Projects");
+                    return RedirectToAction("Index", "Project");
                 }
 
                 Console.WriteLine("ModelState invalide");

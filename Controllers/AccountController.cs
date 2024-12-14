@@ -36,17 +36,19 @@ namespace CrowdFundingApp.Controllers
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
-                if (result.Succeeded)
-                {
-                    _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
-                    //return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return View(model);
-                }
+                _logger.LogInformation("User logged in.");
+                //return LocalRedirect(returnUrl);
+                return RedirectToAction("Index", "Home");
+                //if (result.Succeeded)
+                //{
+
+                //    //return RedirectToAction("Index", "Home");
+                //}
+                //else
+                //{
+                //    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                //    return View(model);
+                //}
             }
             return View(model);
         }

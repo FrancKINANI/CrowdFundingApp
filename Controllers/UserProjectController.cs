@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace CrowdFundingApp.Controllers
 {
-    [Authorize(Roles ="User")]
+    //[Authorize(Roles ="User")]
     public class UserProjectController : Controller
     {
         public readonly CrowdFundingDbContext _context;
@@ -22,9 +22,14 @@ namespace CrowdFundingApp.Controllers
         // GET: UserProjectConsoller
         public async Task<ActionResult> Index()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //var projects = await _context.Projects
+            //    .Where(c => c.UserId == userId)
+            //    .ToListAsync();
+            //return View(projects);
             var projects = await _context.Projects
-                .Where(c => c.UserId == userId)
+                .Include(p => p.User)
+                .Include(p => p.Category)
                 .ToListAsync();
             return View(projects);
         }
