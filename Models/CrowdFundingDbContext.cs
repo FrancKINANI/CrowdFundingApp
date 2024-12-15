@@ -8,7 +8,6 @@ namespace CrowdFundingApp.Models
     public class CrowdFundingDbContext : IdentityDbContext<User>
     {
         public CrowdFundingDbContext(DbContextOptions<CrowdFundingDbContext> options) : base(options) { }
-        //public new DbSet<User>? Users { get; set; }
         public DbSet<Project>? Projects { get; set; }
         public DbSet<Contribution>? Contributions { get; set; }
         public DbSet<Reward>? Rewards { get; set; }

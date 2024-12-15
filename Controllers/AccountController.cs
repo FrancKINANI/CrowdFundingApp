@@ -36,23 +36,19 @@ namespace CrowdFundingApp.Controllers
             if (ModelState.IsValid)
             {
 #pragma warning disable CS8604 // Possible null reference argument.
-#pragma warning disable CS8604 // Possible null reference argument.
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
 #pragma warning restore CS8604 // Possible null reference argument.
-#pragma warning restore CS8604 // Possible null reference argument.
-                _logger.LogInformation("User logged in.");
-                //return LocalRedirect(returnUrl);
-                return RedirectToAction("Index", "Home");
-                //if (result.Succeeded)
-                //{
-
-                //    //return RedirectToAction("Index", "Home");
-                //}
-                //else
-                //{
-                //    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                //    return View(model);
-                //}
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User logged in.");
+                    return LocalRedirect(returnUrl);
+                    //return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return View(model);
+                }
             }
             return View(model);
         }

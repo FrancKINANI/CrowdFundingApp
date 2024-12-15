@@ -66,16 +66,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Call for role initialization
-using (var scope = app.Services.CreateScope())
-{
-    var serviceProvider = scope.ServiceProvider;
-    await InitializeRoles(serviceProvider);
-}
-
-// execution of the application
-app.Run();
-
 // Method to initialize roles and administrator user
 async Task InitializeRoles(IServiceProvider serviceProvider)
 {
@@ -111,3 +101,13 @@ async Task InitializeRoles(IServiceProvider serviceProvider)
         }
     }
 }
+
+// Call for role initialization
+using (var scope = app.Services.CreateScope())
+{
+    var serviceProvider = scope.ServiceProvider;
+    await InitializeRoles(serviceProvider);
+}
+
+// execution of the application
+app.Run();

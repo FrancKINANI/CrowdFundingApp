@@ -15,7 +15,6 @@ namespace CrowdFundingApp.Controllers
         }
 
         // GET: UserController
-
         public async Task<IActionResult> Index()
         {
             var users = _userManager.Users.ToList();

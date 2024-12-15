@@ -22,11 +22,6 @@ namespace CrowdFundingApp.Controllers
         // GET: UserProjectConsoller
         public async Task<ActionResult> Index()
         {
-            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            //var projects = await _context.Projects
-            //    .Where(c => c.UserId == userId)
-            //    .ToListAsync();
-            //return View(projects);
 #pragma warning disable CS8604 // Possible null reference argument.
             var projects = await _context.Projects
                 .Include(p => p.User)

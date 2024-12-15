@@ -10,22 +10,22 @@
     <div class="form-group">
         <label asp-for="Name" class="control-label"></label>
         <textarea asp-for="Name" class="form-control"></textarea>
-        @* <span asp-validation-for="Name" class="text-danger"></span> *@
+        <span asp-validation-for="Name" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="Description" class="control-label"></label>
         <textarea asp-for="Description" class="form-control"></textarea>
-        @* <span asp-validation-for="Description" class="text-danger"></span> *@
+        <span asp-validation-for="Description" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="MinimumContribution" class="control-label">Minimum Contribution</label>
         <input asp-for="MinimumContribution" class="form-control" />
-        @* <span asp-validation-for="MinimumContribution" class="text-danger"></span> *@
+        <span asp-validation-for="MinimumContribution" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="ProjectId" class="control-label">Project</label>
         <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId"></select>
-        @* <span asp-validation-for="ProjectId" class="text-danger"></span> *@
+        <span asp-validation-for="ProjectId" class="text-danger"></span>
     </div>
     <div class="form-group">
         <input type="submit" asp-controller="Reward" value="Add" class="btn btn-primary" />

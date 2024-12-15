@@ -6,22 +6,22 @@
     <div class="form-group">
         <label asp-for="Amount" class="control-label">Contribution amount</label>
         <input asp-for="Amount" class="form-control" />
-        @* <span asp-validation-for="Amount" class="text-danger"></span> *@
+        <span asp-validation-for="Amount" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="ContributionDate" class="control-label">Date</label>
         <input asp-for="ContributionDate" class="form-control" type="date" />
-        @* <span asp-validation-for="ContributionDate" class="text-danger"></span> *@
+        <span asp-validation-for="ContributionDate" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="UserId" class="control-label">Contributor</label>
         <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
-        @* <span asp-validation-for="UserId" class="text-danger"></span> *@
+        <span asp-validation-for="UserId" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="ProjectId" class="control-label">Project</label>
         <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId"></select>
-        @* <span asp-validation-for="ProjectId" class="text-danger"></span> *@
+        <span asp-validation-for="ProjectId" class="text-danger"></span>
     </div>
     <div class="form-group">
         <input type="submit" asp-controller="Contribution" value="Add" class="btn btn-primary" />
