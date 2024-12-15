@@ -1,0 +1,51 @@
+﻿@model User
+
+<h2>User Details</h2>
+
+<div>
+    <h4>User</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Username</dt>
+        <dd class="col-sm-10">@Model.UserName</dd>
+
+        <dt class="col-sm-2">Email</dt>
+        <dd class="col-sm-10">@Model.Email</dd>
+
+        <dt class="col-sm-2">Date of creation</dt>
+        <dd class="col-sm-10">@Model.CreatedAt</dd>
+    </dl>
+</div>
+
+<h3>Projects Associated with this User</h3>
+@if (Model.Projects != null && Model.Projects.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Project Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var project in Model.Projects)
+            {
+                <tr>
+                    <td>@project.Title</td>
+                    <td>@project.Description</td>
+                    <td>
+                        <a asp-action="Details" asp-controller="Project" asp-route-id="@project.ProjectId" class="btn btn-info">View</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No projects associated with this user.</p>
+}
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

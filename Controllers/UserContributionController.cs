@@ -123,7 +123,9 @@ namespace CrowdFundingApp.Controllers
             {
                 try
                 {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                     var existingContribution = await _context.Contributions.FindAsync(id);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     if (existingContribution == null)
                     {
                         return NotFound();

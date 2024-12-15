@@ -1,17 +1,21 @@
 ﻿using CrowdFundingApp.Models;
+using CrowdFundingApp.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CrowdFundingApp.Controllers
 {
     public class UserController : Controller
     {
         private readonly UserManager<User> _userManager;
+        private readonly CrowdFundingDbContext _context;
 
-        public UserController(UserManager<User> userManager)
+        public UserController(UserManager<User> userManager, CrowdFundingDbContext context)
         {
             _userManager = userManager;
+            _context = context;
         }
 
         // GET: UserController
@@ -39,13 +43,24 @@ namespace CrowdFundingApp.Controllers
         }
 
         // GET: UserController/Details/5
-        public ActionResult Details(int id)
+        public async Task<IActionResult> Details(string id)
         {
-            return View();
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
         }
 
         // GET: UserController/Create
-        public ActionResult Create()
+        public IActionResult Create()
         {
             return View();
         }
@@ -53,58 +68,145 @@ namespace CrowdFundingApp.Controllers
         // POST: UserController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create([Bind("Email,UserName,Password")] UserCreateViewModel userModel)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                var user = new User
+                {
+                    UserName = userModel.UserName,
+                    Email = userModel.Email
+                };
+
+#pragma warning disable CS8604 // Possible null reference argument.
+                var result = await _userManager.CreateAsync(user, userModel.Password);
+#pragma warning restore CS8604 // Possible null reference argument.
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(userModel);
         }
 
+
         // GET: UserController/Edit/5
-        public ActionResult Edit(int id)
+        // GET: UserController/Edit/5
+        public async Task<IActionResult> Edit(string id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new UserEditViewModel
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email
+            };
+
+            return View(viewModel);
         }
 
         // POST: UserController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(string id, UserEditViewModel model)
         {
-            try
+            if (id != model.Id)
             {
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
+
+            if (ModelState.IsValid)
             {
-                return View();
+                var user = await _userManager.FindByIdAsync(id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                user.UserName = model.UserName;
+                user.Email = model.Email;
+
+                var result = await _userManager.UpdateAsync(user);
+
+                if (!string.IsNullOrEmpty(model.NewPassword))
+                {
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var passwordResult = await _userManager.ResetPasswordAsync(user, token, model.NewPassword);
+
+                    if (!passwordResult.Succeeded)
+                    {
+                        foreach (var error in passwordResult.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                        return View(model);
+                    }
+                }
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
             }
+
+            return View(model);
         }
 
         // GET: UserController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
-            return View();
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
         }
 
         // POST: UserController/Delete/5
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var user = await _context.Users.FindAsync(id);
+#pragma warning disable CS8604 // Possible null reference argument.
+            _context.Users.Remove(user);
+#pragma warning restore CS8604 // Possible null reference argument.
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool UserExists(string id)
+        {
+            return _context.Users.Any(e => e.Id == id);
         }
     }
 }
