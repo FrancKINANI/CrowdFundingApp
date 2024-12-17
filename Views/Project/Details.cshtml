@@ -29,6 +29,7 @@
     </dl>
 </div>
 <div>
+    <a asp-controller="Contribution" asp-action="Create" asp-route-id="@Model.ProjectId" class="btn btn-info btn-sm">Contribute</a>
     <a asp-action="Edit" asp-route-id="@Model.ProjectId" class="btn btn-warning btn-sm">Edit</a> |
     <a asp-action="Index" class="btn btn-sm">Back to the list</a>
 </div>

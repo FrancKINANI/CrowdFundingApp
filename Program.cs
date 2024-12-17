@@ -9,19 +9,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CrowdFundingDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CrowdFundingConnection")));
 
-builder.Services.Configure<CookiePolicyOptions>(options =>
-{
-    options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
-    options.Secure = CookieSecurePolicy.None;
-});
+//builder.Services.Configure<CookiePolicyOptions>(options =>
+//{
+//    options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
+//    options.Secure = CookieSecurePolicy.None;
+//});
 
 // Setting up cookie authentication
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.LoginPath = "/Account/Login";
-    options.LogoutPath = "/Account/Logout"; 
-    options.AccessDeniedPath = "/Account/AccessDenied";
-});
+//builder.Services.ConfigureApplicationCookie(options =>
+//{
+//    options.LoginPath = "/Account/Login";
+//    options.LogoutPath = "/Account/Logout"; 
+//    options.AccessDeniedPath = "/Account/AccessDenied";
+//});
 
 // Configuration of the identity
 builder.Services.AddIdentity<User, IdentityRole>(options =>
@@ -35,13 +35,13 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     .AddDefaultTokenProviders();
 
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-    options.SlidingExpiration = false;
-    options.Cookie.HttpOnly = true;
-    options.Cookie.Expiration = null;
-});
+//builder.Services.ConfigureApplicationCookie(options =>
+//{
+//    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+//    options.SlidingExpiration = false;
+//    options.Cookie.HttpOnly = true;
+//    options.Cookie.Expiration = null;
+//});
 
 builder.Services.AddControllersWithViews();
 

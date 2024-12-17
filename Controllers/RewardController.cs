@@ -19,9 +19,9 @@ namespace CrowdFundingApp.Controllers
         // GET: RewardController
         public ActionResult Index()
         {
-#pragma warning disable CS8604 // Possible null reference argument.
+ 
             var rewards = _context.Rewards.Include(p => p.Project).ToList();
-#pragma warning restore CS8604 // Possible null reference argument.
+
             return View(rewards);
         }
 
@@ -33,11 +33,11 @@ namespace CrowdFundingApp.Controllers
                 return NotFound();
             }
 
-#pragma warning disable CS8604 // Possible null reference argument.
+ 
             var reward = await _context.Rewards
                 .Include(r => r.Project)
                 .FirstOrDefaultAsync(m => m.RewardId == id);
-#pragma warning restore CS8604 // Possible null reference argument.
+
             if (reward == null)
             {
                 return NotFound();
@@ -79,9 +79,9 @@ namespace CrowdFundingApp.Controllers
                 return NotFound();
             }
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+
             var reward = await _context.Rewards.FindAsync(id);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
             if (reward == null)
             {
                 return NotFound();
@@ -132,11 +132,11 @@ namespace CrowdFundingApp.Controllers
                 return NotFound();
             }
 
-#pragma warning disable CS8604 // Possible null reference argument.
+ 
             var reward = await _context.Rewards
                 .Include(r => r.Project)
                 .FirstOrDefaultAsync(m => m.RewardId == id);
-#pragma warning restore CS8604 // Possible null reference argument.
+
             if (reward == null)
             {
                 return NotFound();
@@ -150,21 +150,21 @@ namespace CrowdFundingApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+
             var reward = await _context.Rewards.FindAsync(id);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-#pragma warning disable CS8604 // Possible null reference argument.
+
+ 
             _context.Rewards.Remove(reward);
-#pragma warning restore CS8604 // Possible null reference argument.
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool RewardExists(int id)
         {
-#pragma warning disable CS8604 // Possible null reference argument.
+ 
             return _context.Rewards.Any(e => e.RewardId == id);
-#pragma warning restore CS8604 // Possible null reference argument.
+
         }
     }
 }

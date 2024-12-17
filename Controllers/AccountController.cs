@@ -35,9 +35,7 @@ namespace CrowdFundingApp.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-#pragma warning disable CS8604 // Possible null reference argument.
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
-#pragma warning restore CS8604 // Possible null reference argument.
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
@@ -68,9 +66,7 @@ namespace CrowdFundingApp.Controllers
             if (ModelState.IsValid)
             {
                 var user = new User { UserName = model.Email, Email = model.Email };
-#pragma warning disable CS8604 // Possible null reference argument.
                 var result = await _userManager.CreateAsync(user, model.Password);
-#pragma warning restore CS8604 // Possible null reference argument.
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);

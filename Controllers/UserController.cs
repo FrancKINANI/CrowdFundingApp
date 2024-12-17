@@ -78,9 +78,9 @@ namespace CrowdFundingApp.Controllers
                     Email = userModel.Email
                 };
 
-#pragma warning disable CS8604 // Possible null reference argument.
+ 
                 var result = await _userManager.CreateAsync(user, userModel.Password);
-#pragma warning restore CS8604 // Possible null reference argument.
+
 
                 if (result.Succeeded)
                 {
@@ -197,9 +197,9 @@ namespace CrowdFundingApp.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var user = await _context.Users.FindAsync(id);
-#pragma warning disable CS8604 // Possible null reference argument.
+ 
             _context.Users.Remove(user);
-#pragma warning restore CS8604 // Possible null reference argument.
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

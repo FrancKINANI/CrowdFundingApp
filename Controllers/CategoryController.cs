@@ -18,9 +18,7 @@ namespace CrowdFundingApp.Controllers
         // GET: CategoryController
         public ActionResult Index()
         {
-#pragma warning disable CS8604 // Possible null reference argument.
             List<Category> categories = _context.Categories.ToList();
-#pragma warning restore CS8604 // Possible null reference argument.
             return View(categories);
         }
 
@@ -31,12 +29,9 @@ namespace CrowdFundingApp.Controllers
             {
                 return NotFound();
             }
-
-#pragma warning disable CS8604 // Possible null reference argument.
             var category = await _context.Categories
-                .Include(c => c.Projects) // Charger les projets associés
+                .Include(c => c.Projects)
                 .FirstOrDefaultAsync(m => m.CategoryId == id);
-#pragma warning restore CS8604 // Possible null reference argument.
 
             if (category == null)
             {
@@ -59,9 +54,7 @@ namespace CrowdFundingApp.Controllers
         {
             try
             {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 _context.Categories.Add(category);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
@@ -78,9 +71,7 @@ namespace CrowdFundingApp.Controllers
             {
                 return NotFound();
             }
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             var category = await _context.Categories.FindAsync(id);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
             if (category == null)
             {
                 return NotFound();
@@ -131,9 +122,7 @@ namespace CrowdFundingApp.Controllers
                 return NotFound();
             }
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             var category = await _context.Categories.FindAsync(id);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
             if (category == null)
             {
                 return NotFound();
@@ -147,21 +136,15 @@ namespace CrowdFundingApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             var category = await _context.Categories.FindAsync(id);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-#pragma warning disable CS8604 // Possible null reference argument.
             _context.Categories.Remove(category);
-#pragma warning restore CS8604 // Possible null reference argument.
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CategoryExists(int id)
         {
-#pragma warning disable CS8604 // Possible null reference argument.
             return _context.Categories.Any(e => e.CategoryId == id);
-#pragma warning restore CS8604 // Possible null reference argument.
         }
     }
 }

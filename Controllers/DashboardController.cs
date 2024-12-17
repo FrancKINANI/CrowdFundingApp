@@ -46,21 +46,13 @@ namespace CrowdFundingApp.Controllers
         public IActionResult AdminDashboard()
         {
             var users = _context.Users.ToList();
-#pragma warning disable CS8604 // Possible null reference argument.
             var projects = _context.Projects.ToList();
-#pragma warning restore CS8604 // Possible null reference argument.
-#pragma warning disable CS8604 // Possible null reference argument.
             var contributions = _context.Contributions.ToList();
-#pragma warning restore CS8604 // Possible null reference argument.
-#pragma warning disable CS8604 // Possible null reference argument.
             var rewards = _context.Rewards.ToList();
-#pragma warning restore CS8604 // Possible null reference argument.
-#pragma warning disable CS8604 // Possible null reference argument.
             var userRewards = _context.UserRewards
                 .Include(ur => ur.User)
                 .Include(ur => ur.Reward)
                 .ToList();
-#pragma warning restore CS8604 // Possible null reference argument.
 
             var viewModel = new AdminDashboardViewModel
             {
@@ -83,29 +75,29 @@ namespace CrowdFundingApp.Controllers
                 return Unauthorized();
             }
 
-#pragma warning disable CS8604 // Possible null reference argument.
+ 
             var userProjects = await _context.Projects
                 .Where(p => p.UserId == userId)
                 .ToListAsync();
-#pragma warning restore CS8604 // Possible null reference argument.
 
-#pragma warning disable CS8604 // Possible null reference argument.
+
+ 
             var userContributions = await _context.Contributions
                 .Where(c => c.UserId == userId)
                 .Include(c => c.Project)
                 .ToListAsync();
-#pragma warning restore CS8604 // Possible null reference argument.
 
-#pragma warning disable CS8604 // Possible null reference argument.
+
+ 
             var userRewards = await _context.UserRewards
                 .Where(ur => ur.UserId == userId)
                 .Include(ur => ur.Reward)
                 .ToListAsync();
-#pragma warning restore CS8604 // Possible null reference argument.
 
-#pragma warning disable CS8604 // Possible null reference argument.
+
+ 
             var projectCategory = await _context.Categories.ToListAsync();
-#pragma warning restore CS8604 // Possible null reference argument.
+
 
 
             var viewModel = new UserDashboardViewModel

@@ -20,9 +20,7 @@ namespace CrowdFundingApp.Controllers
         // GET: ContributionController
         public ActionResult Index()
         {
-#pragma warning disable CS8604 // Possible null reference argument.
             var contributions = _context.Contributions.Include(c => c.User).Include(c => c.Project).ToList();
-#pragma warning restore CS8604 // Possible null reference argument.
             return View(contributions);
         }
 
@@ -33,7 +31,7 @@ namespace CrowdFundingApp.Controllers
             {
                 return NotFound();
             }
-#pragma warning disable CS8604 // Possible null reference argument.
+ 
             var contribution = await _context.Contributions
 #pragma warning restore CS8604 // Dereference of a possibly null reference.
                 .Include(c => c.User)
@@ -62,12 +60,18 @@ namespace CrowdFundingApp.Controllers
         {
             try
             {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+
                 _context.Contributions.Add(contribution);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
                 ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", contribution.UserId);
                 ViewData["ProjectId"] = new SelectList(_context.Projects, "ProjectId", "Title", contribution.ProjectId);
-                _context.SaveChanges();
+                var project = _context.Projects.Find(contribution.ProjectId);
+                if (project != null)
+                {
+                    project.CurrentAmount += contribution.Amount;
+                    _context.Update(project);
+                    _context.SaveChanges();
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -83,9 +87,9 @@ namespace CrowdFundingApp.Controllers
             {
                 return NotFound();
             }
-#pragma warning disable CS8602 // Possible null reference argument.
+
             var contribution = await _context.Contributions.FindAsync(id);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
             if (contribution == null)
             {
                 return NotFound();
@@ -109,9 +113,23 @@ namespace CrowdFundingApp.Controllers
             {
                 try
                 {
-                    contribution.ContributionDate = DateTime.Now;
-                    _context.Update(contribution);
-                    await _context.SaveChangesAsync();
+                    var existingContribution = await _context.Contributions.AsNoTracking()
+                            .FirstOrDefaultAsync(c => c.ContributionId == id);
+
+                    if (existingContribution != null)
+                    {
+                        var project = await _context.Projects.FindAsync(contribution.ProjectId);
+                        if (project != null)
+                        {
+                            var difference = contribution.Amount - existingContribution.Amount;
+                            project.CurrentAmount += difference;
+
+                            _context.Update(project);
+                        }
+
+                        _context.Update(contribution);
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -138,13 +156,10 @@ namespace CrowdFundingApp.Controllers
             {
                 return NotFound();
             }
-
-#pragma warning disable CS8604 // Possible null reference argument.
             var contribution = await _context.Contributions
                 .Include(c => c.User)
                 .Include(c => c.Project)
                 .FirstOrDefaultAsync(m => m.ContributionId == id);
-#pragma warning restore CS8604 // Possible null reference argument.
             if (contribution == null)
             {
                 return NotFound();
@@ -158,21 +173,21 @@ namespace CrowdFundingApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             var contribution = await _context.Contributions.FindAsync(id);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-#pragma warning disable CS8604 // Possible null reference argument.
+            var project = await _context.Projects.FindAsync(contribution.ProjectId);
+            if (project != null)
+            {
+                project.CurrentAmount -= contribution.Amount;
+                _context.Update(project);
+            }
             _context.Contributions.Remove(contribution);
-#pragma warning restore CS8604 // Possible null reference argument.
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ContributionExists(int id)
         {
-#pragma warning disable CS8604 // Possible null reference argument.
             return _context.Contributions.Any(e => e.ContributionId == id);
-#pragma warning restore CS8604 // Possible null reference argument.
         }
     }
 }

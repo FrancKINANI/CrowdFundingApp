@@ -19,11 +19,11 @@ namespace CrowdFundingApp.Controllers
         // GET: UserRewardController
         public ActionResult Index()
         {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-#pragma warning disable CS8604 // Possible null reference argument.
+
+ 
             var userRewards = _context.UserRewards.Include(ur => ur.User).Include(ur => ur.Reward).ThenInclude(r => r.Project);
-#pragma warning restore CS8604 // Possible null reference argument.
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
+
             return View(userRewards.ToList());
         }
 
@@ -35,15 +35,15 @@ namespace CrowdFundingApp.Controllers
                 return NotFound();
             }
 
-#pragma warning disable CS8604 // Possible null reference argument.
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+ 
+
             var userReward = await _context.UserRewards
                 .Include(ur => ur.User)
                 .Include(ur => ur.Reward)
                 .ThenInclude(r => r.Project)
                 .FirstOrDefaultAsync(m => m.UserRewardId == id);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-#pragma warning restore CS8604 // Possible null reference argument.
+
+
             if (userReward == null)
             {
                 return NotFound();
@@ -56,9 +56,9 @@ namespace CrowdFundingApp.Controllers
         public ActionResult Create()
         {
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
-#pragma warning disable CS8604 // Possible null reference argument.
+ 
             ViewData["RewardId"] = new SelectList(_context.Rewards.Include(r => r.Project), "RewardId", "Description");
-#pragma warning restore CS8604 // Possible null reference argument.
+
             return View();
         }
 
@@ -69,13 +69,13 @@ namespace CrowdFundingApp.Controllers
         {
             try
             {             
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+
                 _context.UserRewards.Add(userReward);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
                 ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", userReward.UserId);
-#pragma warning disable CS8604 // Possible null reference argument.
+ 
                 ViewData["RewardId"] = new SelectList(_context.Rewards.Include(r => r.Project), "RewardId", "Description", userReward.RewardId);
-#pragma warning restore CS8604 // Possible null reference argument.
+
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
@@ -93,17 +93,17 @@ namespace CrowdFundingApp.Controllers
                 return NotFound();
             }
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+
             var userReward = await _context.UserRewards.FindAsync(id);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
             if (userReward == null)
             {
                 return NotFound();
             }
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", userReward.UserId);
-#pragma warning disable CS8604 // Possible null reference argument.
+ 
             ViewData["RewardId"] = new SelectList(_context.Rewards.Include(r => r.Project), "RewardId", "Description", userReward.RewardId);
-#pragma warning restore CS8604 // Possible null reference argument.
+
             return View(userReward);
         }
 
@@ -138,9 +138,9 @@ namespace CrowdFundingApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", userReward.UserId);
-#pragma warning disable CS8604 // Possible null reference argument.
+ 
             ViewData["RewardId"] = new SelectList(_context.Rewards.Include(r => r.Project), "RewardId", "Description", userReward.RewardId);
-#pragma warning restore CS8604 // Possible null reference argument.
+
             return View(userReward);
         }
 
@@ -152,15 +152,15 @@ namespace CrowdFundingApp.Controllers
                 return NotFound();
             }
 
-#pragma warning disable CS8604 // Possible null reference argument.
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+ 
+
             var userReward = await _context.UserRewards
                 .Include(ur => ur.User)
                 .Include(ur => ur.Reward)
                 .ThenInclude(r => r.Project)
                 .FirstOrDefaultAsync(m => m.UserRewardId == id);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-#pragma warning restore CS8604 // Possible null reference argument.
+
+
             if (userReward == null)
             {
                 return NotFound();
@@ -174,21 +174,21 @@ namespace CrowdFundingApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+
             var userReward = await _context.UserRewards.FindAsync(id);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-#pragma warning disable CS8604 // Possible null reference argument.
+
+ 
             _context.UserRewards.Remove(userReward);
-#pragma warning restore CS8604 // Possible null reference argument.
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool UserRewardExists(int id)
         {
-#pragma warning disable CS8604 // Possible null reference argument.
+
             return _context.UserRewards.Any(e => e.UserRewardId == id);
-#pragma warning restore CS8604 // Possible null reference argument.
+
         }
     }
 }

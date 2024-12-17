@@ -21,12 +21,12 @@ namespace CrowdFundingApp.Controllers
        // GET: ProjectController
        public async Task<ActionResult> Index()
        {
-#pragma warning disable CS8604 // Possible null reference argument.
+ 
             var projects = await _context.Projects
                 .Include(p => p.User)
                 .Include(p => p.Category)
                 .ToListAsync();
-#pragma warning restore CS8604 // Possible null reference argument.
+
             return View(projects);
        }
 
@@ -39,9 +39,9 @@ namespace CrowdFundingApp.Controllers
             {
                 return NotFound();
             }
-#pragma warning disable CS8604 // Possible null reference argument.
+ 
             var project = await _context.Projects
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
                 .Include(p => p.User)
                 .Include(p => p.Category)
                 .FirstOrDefaultAsync(m => m.ProjectId == id);
@@ -68,9 +68,9 @@ namespace CrowdFundingApp.Controllers
         {
             try
             {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+
                 _context.Projects.Add(project);        
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
                 ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", project.UserId);
                 ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", project.CategoryId);
                 _context.SaveChanges();
@@ -89,7 +89,7 @@ namespace CrowdFundingApp.Controllers
             {
                 return NotFound();
             }
-#pragma warning disable CS8602 // Possible null reference argument.
+
             var project = await _context.Projects
                 .FirstOrDefaultAsync(p => p.ProjectId == id);
 
