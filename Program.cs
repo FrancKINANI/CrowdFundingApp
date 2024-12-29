@@ -1,29 +1,20 @@
 using CrowdFundingApp.Models;
+using CrowdFundingApp.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Adding services for controllers and views
+//-------------------------
+// Service Configuration
+//-------------------------
+
+// Configure Entity Framework with SQL Server
 builder.Services.AddDbContext<CrowdFundingDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CrowdFundingConnection")));
 
-//builder.Services.Configure<CookiePolicyOptions>(options =>
-//{
-//    options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
-//    options.Secure = CookieSecurePolicy.None;
-//});
-
-// Setting up cookie authentication
-//builder.Services.ConfigureApplicationCookie(options =>
-//{
-//    options.LoginPath = "/Account/Login";
-//    options.LogoutPath = "/Account/Logout"; 
-//    options.AccessDeniedPath = "/Account/AccessDenied";
-//});
-
-// Configuration of the identity
+// Configure Identity for user and role management
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -34,66 +25,80 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     .AddEntityFrameworkStores<CrowdFundingDbContext>()
     .AddDefaultTokenProviders();
 
+// Configure cookie settings for authentication
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+    options.ExpireTimeSpan = TimeSpan.FromHours(2);
+    options.SlidingExpiration = true;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
 
-//builder.Services.ConfigureApplicationCookie(options =>
-//{
-//    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-//    options.SlidingExpiration = false;
-//    options.Cookie.HttpOnly = true;
-//    options.Cookie.Expiration = null;
-//});
-
+// Add controllers and views
 builder.Services.AddControllersWithViews();
+
+// Add logging and custom services
+builder.Services.AddLogging();
+builder.Services.AddScoped<IFileService, FileService>();
 
 var app = builder.Build();
 
-// Error management and security
+//-------------------------
+// Middleware Configuration
+//-------------------------
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
-// Middleware for routing, security, authentication and static files
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Definition of routes
+// Define default routing pattern
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Method to initialize roles and administrator user
+//-------------------------
+// Role and Admin Initialization
+//-------------------------
+
 async Task InitializeRoles(IServiceProvider serviceProvider)
 {
     var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
 
-    // Check and create the Admin role
-    if (!await roleManager.RoleExistsAsync("Admin"))
+    // Roles to be created
+    var roles = new[] { "Admin", "Startup", "Investor", "User" };
+
+    foreach (var role in roles)
     {
-        await roleManager.CreateAsync(new IdentityRole("Admin"));
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
     }
 
-    // Check and create the User role
-    if (!await roleManager.RoleExistsAsync("User"))
-    {
-        await roleManager.CreateAsync(new IdentityRole("User"));
-    }
-
-    // Create a default administrator user if it does not exist
-    var adminUser = await userManager.FindByEmailAsync("admin@crowdfunding.com");
+    // Create a default admin user
+    var adminEmail = "admin@crowdfunding.com";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
     if (adminUser == null)
     {
         var admin = new User
         {
             UserName = "admin",
-            Email = "admin@crowdfunding.com",
+            Email = adminEmail,
             EmailConfirmed = true
         };
+
         var result = await userManager.CreateAsync(admin, "Admin1234!");
         if (result.Succeeded)
         {
@@ -102,12 +107,14 @@ async Task InitializeRoles(IServiceProvider serviceProvider)
     }
 }
 
-// Call for role initialization
+// Call the role initialization method
 using (var scope = app.Services.CreateScope())
 {
     var serviceProvider = scope.ServiceProvider;
     await InitializeRoles(serviceProvider);
 }
 
-// execution of the application
+//-------------------------
+// Application Execution
+//-------------------------
 app.Run();

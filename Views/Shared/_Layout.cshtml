@@ -10,7 +10,7 @@
 </head>
 <body>
     <header>
-        <nav  class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">IdeaNest</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -20,32 +20,33 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                        @if (User.IsInRole("Admin"))
+                        @if (User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Project" asp-action="Index">Projects</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Categories</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Users</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="UserReward" asp-action="Index">Rewards given</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Contribution" asp-action="Index">Contributions</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Reward" asp-action="Index">Rewards</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Dashboard" asp-action="AdminDashboard">Dashboard</a></li>                        
-                        }
-                        else if (User.IsInRole("User"))
-                        {
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="UserProject" asp-action="Index">Projects</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="Dashboard" asp-action="UserDashboard">Dashboard</a></li>                                             
-                        }
-                        else
-                        {
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Registration</a></li>
-                        }
-                        @if(User.Identity.IsAuthenticated){
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Project" asp-action="Index">Projects</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Categories</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Users</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="UserReward" asp-action="Index">Rewards given</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Contribution" asp-action="Index">Contributions</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Reward" asp-action="Index">Rewards</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Dashboard" asp-action="AdminDashboard">Dashboard</a></li>
+                            }
+                            else
+                            {
+                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="UserProject" asp-action="Index">Projects</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Dashboard" asp-action="UserDashboard">Dashboard</a></li>
+                            }
                             <li class="nav-item">
                                 <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
                                     <button type="submit" class="nav-link text-dark" style="border:none; background:none;">Logout</button>
                                 </form>
                             </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Register</a></li>
                         }
                     </ul>
                 </div>

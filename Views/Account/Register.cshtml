@@ -1,38 +1,100 @@
-﻿@model CrowdFundingApp.ViewModels.RegisterViewModel
-
+﻿@using CrowdFundingApp.ViewModels
+@model RegisterViewModel
 @{
-    ViewData["Title"] = "Inscription";
+    ViewData["Title"] = "Register";
 }
 
-<h2>Inscription</h2>
+<h1>@ViewData["Title"]</h1>
+<div class="row">
+    <div class="col-md-6">
+        <form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+            <h4>Create a new account.</h4>
+            <hr />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
 
-@if (!ViewData.ModelState.IsValid)
-{
-    <div class="text-danger">
-        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-        {
-            <p>@error.ErrorMessage</p>
-        }
+            <div class="form-group">
+                <label asp-for="UserType"></label>
+                <select asp-for="UserType" class="form-control" id="userTypeSelect">
+                    <option value="">Select account type</option>
+                    <option value="Startup">Startup</option>
+                    <option value="Investor">Investor</option>
+                </select>
+                <span asp-validation-for="UserType" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Bio"></label>
+                <textarea asp-for="Bio" class="form-control"></textarea>
+                <span asp-validation-for="Bio" class="text-danger"></span>
+            </div>
+
+            <!-- Startup-specific fields -->
+            <div id="startupFields" style="display:none;">
+                <div class="form-group">
+                    <label asp-for="CompanyName"></label>
+                    <input asp-for="CompanyName" class="form-control" />
+                    <span asp-validation-for="CompanyName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="BusinessDescription"></label>
+                    <textarea asp-for="BusinessDescription" class="form-control"></textarea>
+                    <span asp-validation-for="BusinessDescription" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Investor-specific fields -->
+            <div id="investorFields" style="display:none;">
+                <div class="form-group">
+                    <label asp-for="InvestmentCapacity"></label>
+                    <input asp-for="InvestmentCapacity" class="form-control" />
+                    <span asp-validation-for="InvestmentCapacity" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="InvestmentPreferences"></label>
+                    <textarea asp-for="InvestmentPreferences" class="form-control"></textarea>
+                    <span asp-validation-for="InvestmentPreferences" class="text-danger"></span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
     </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('userTypeSelect').addEventListener('change', function() {
+            var startupFields = document.getElementById('startupFields');
+            var investorFields = document.getElementById('investorFields');
+            
+            if (this.value === 'Startup') {
+                startupFields.style.display = 'block';
+                investorFields.style.display = 'none';
+            } else if (this.value === 'Investor') {
+                startupFields.style.display = 'none';
+                investorFields.style.display = 'block';
+            } else {
+                startupFields.style.display = 'none';
+                investorFields.style.display = 'none';
+            }
+        });
+    </script>
 }
-
-<form method="post" asp-action="Register">
-    <div class="form-group">
-        <label asp-for="Email" class="control-label"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Password" class="control-label"></label>
-        <input asp-for="Password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="ConfirmPassword" class="control-label"></label>
-        <input asp-for="ConfirmPassword" class="form-control" />
-        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <input type="submit" asp-controller="Account" value="Register" class="btn btn-primary" />
-    </div>
-</form>

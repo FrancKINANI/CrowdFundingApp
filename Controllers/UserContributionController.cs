@@ -12,12 +12,18 @@ namespace CrowdFundingApp.Controllers
     [Authorize(Roles = "Admin, User")]
     public class UserContributionController : Controller
     {
-        public readonly CrowdFundingDbContext _context;
+         private readonly CrowdFundingDbContext _context;
         private readonly UserManager<User> _userManager;
-        public UserContributionController(CrowdFundingDbContext context, UserManager<User> userManager)
+        private readonly ILogger<UserContributionController> _logger;
+
+        public UserContributionController(
+            CrowdFundingDbContext context, 
+            UserManager<User> userManager,
+            ILogger<UserContributionController> logger)
         {
             _context = context;
             _userManager = userManager;
+            _logger = logger;
         }
 
         // GET: UserContributionController
@@ -48,39 +54,148 @@ namespace CrowdFundingApp.Controllers
         }
 
         // POST: UserContributionController/Create
+        /* [HttpPost]
+         [ValidateAntiForgeryToken]
+         public IActionResult Create(Contribution contribution)
+         {
+             try
+             {
+                 if (ModelState.IsValid)
+                 {
+                     contribution.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                     contribution.ContributionDate = DateTime.Now;
+
+                     _context.Contributions.Add(contribution);
+                     var project = _context.Projects.Find(contribution.ProjectId);
+                     if (project != null)
+                     {
+                         project.CurrentAmount += contribution.Amount;
+                         _context.Update(project);
+                         _context.SaveChanges();
+                         return RedirectToAction(nameof(Index));
+                     }
+                 }
+                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                 {
+                     Console.WriteLine(error.ErrorMessage);
+                 }
+                 return View(contribution);
+             }
+             catch (Exception ex)
+             {
+                 Console.WriteLine($"Erreur : {ex.Message}");
+                 return View(contribution);
+             }
+         }*/
+
+        //
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Contribution contribution)
+        public async Task<IActionResult> Create(Contribution contribution)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    contribution.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    contribution.ContributionDate = DateTime.Now;
+                    // Get current user and project
+                    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var project = await _context.Projects
+                        .Include(p => p.User)
+                        .FirstOrDefaultAsync(p => p.ProjectId == contribution.ProjectId);
 
-                    _context.Contributions.Add(contribution);
-                    var project = _context.Projects.Find(contribution.ProjectId);
-                    if (project != null)
+                    // Validate project exists
+                    if (project == null)
                     {
-                        project.CurrentAmount += contribution.Amount;
-                        _context.Update(project);
-                        _context.SaveChanges();
-                        return RedirectToAction(nameof(Index));
+                        ModelState.AddModelError("", "Project not found.");
+                        return View(contribution);
                     }
-                }
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    Console.WriteLine(error.ErrorMessage);
+
+                    // Check if project is still accepting investments
+                    if (project.EndDate < DateTime.Now)
+                    {
+                        ModelState.AddModelError("", "This project's funding period has ended.");
+                        return View(contribution);
+                    }
+
+                    // Check if investment would exceed goal
+                    if (project.CurrentAmount + contribution.Amount > project.GoalAmount)
+                    {
+                        ModelState.AddModelError("", "This investment would exceed the project's goal amount.");
+                        return View(contribution);
+                    }
+
+                    // Create the contribution
+                    contribution.UserId = userId;
+                    contribution.ContributionDate = DateTime.Now;
+                    _context.Contributions.Add(contribution);
+
+                    // Update project amount
+                    project.CurrentAmount += contribution.Amount;
+                    _context.Update(project);
+
+                    // Check if this contribution meets any reward thresholds
+                    var eligibleRewards = await _context.Rewards
+                        .Where(r => r.ProjectId == project.ProjectId && r.MinimumContribution <= contribution.Amount)
+                        .ToListAsync();
+
+                    foreach (var reward in eligibleRewards)
+                    {
+                        var userReward = new UserReward
+                        {
+                            UserId = userId,
+                            RewardId = reward.RewardId,
+                            DateAwarded = DateTime.Now
+                        };
+                        _context.UserRewards.Add(userReward);
+                    }
+
+                    await _context.SaveChangesAsync();
+
+                    // Send notification to project owner
+                    // You can implement this later with SignalR or email notifications
+
+                    return RedirectToAction("Details", "Project", new { id = project.ProjectId });
                 }
                 return View(contribution);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur : {ex.Message}");
+                _logger.LogError($"Error creating contribution: {ex.Message}");
+                ModelState.AddModelError("", "An error occurred while processing your investment.");
                 return View(contribution);
             }
         }
+        //
+        [HttpGet]
+public async Task<IActionResult> Statistics()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    
+    var stats = new ContributionStatistics
+    {
+        TotalInvested = await _context.Contributions
+            .Where(c => c.UserId == userId)
+            .SumAsync(c => c.Amount),
+            
+        ProjectsInvested = await _context.Contributions
+            .Where(c => c.UserId == userId)
+            .Select(c => c.ProjectId)
+            .Distinct()
+            .CountAsync(),
+            
+        RewardsEarned = await _context.UserRewards
+            .Where(ur => ur.UserId == userId)
+            .CountAsync(),
+            
+        ActiveInvestments = await _context.Contributions
+            .Include(c => c.Project)
+            .Where(c => c.UserId == userId && c.Project.EndDate > DateTime.Now)
+            .ToListAsync()
+    };
+    
+    return View(stats);
+}
+        //
 
         // GET: UserContributionController/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -186,5 +301,8 @@ namespace CrowdFundingApp.Controllers
         {
             return _context.Contributions.Any(e => e.ContributionId == id);
         }
+
+        //
+
     }
 }

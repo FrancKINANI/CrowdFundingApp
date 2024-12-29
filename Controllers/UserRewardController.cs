@@ -1,194 +1,154 @@
 ﻿using CrowdFundingApp.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
-namespace CrowdFundingApp.Controllers
+public class UserRewardController : Controller
 {
-    [Authorize(Roles = "Admin")]
-    public class UserRewardController : Controller
+    private readonly CrowdFundingDbContext _context;
+    private readonly UserManager<User> _userManager;
+    private readonly ILogger<UserRewardController> _logger;
+
+    public UserRewardController(
+        CrowdFundingDbContext context,
+        UserManager<User> userManager,
+        ILogger<UserRewardController> logger)
     {
-        public CrowdFundingDbContext _context { get; set; }
-        public UserRewardController(CrowdFundingDbContext context)
-        {
-            _context = context;
-        }
+        _context = context;
+        _userManager = userManager;
+        _logger = logger;
+    }
 
-        // GET: UserRewardController
-        public ActionResult Index()
-        {
-
- 
-            var userRewards = _context.UserRewards.Include(ur => ur.User).Include(ur => ur.Reward).ThenInclude(r => r.Project);
-
-
-            return View(userRewards.ToList());
-        }
-
-        // GET: UserRewardController/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
- 
-
-            var userReward = await _context.UserRewards
-                .Include(ur => ur.User)
-                .Include(ur => ur.Reward)
+    [Authorize]
+    public async Task<IActionResult> Index()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userRewards = await _context.UserRewards
+            .Include(ur => ur.Reward)
                 .ThenInclude(r => r.Project)
-                .FirstOrDefaultAsync(m => m.UserRewardId == id);
+            .Where(ur => ur.UserId == userId)
+            .OrderByDescending(ur => ur.DateAwarded)
+            .ToListAsync();
 
+        return View(userRewards);
+    }
 
-            if (userReward == null)
-            {
-                return NotFound();
-            }
-
-            return View(userReward);
-        }
-
-        // GET: UserRewardController/Create
-        public ActionResult Create()
-        {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
- 
-            ViewData["RewardId"] = new SelectList(_context.Rewards.Include(r => r.Project), "RewardId", "Description");
-
-            return View();
-        }
-
-        // POST: UserRewardController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("UserRewardId,UserId,RewardId,DateAwarded")] UserReward userReward)
-        {
-            try
-            {             
-
-                _context.UserRewards.Add(userReward);
-
-                ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", userReward.UserId);
- 
-                ViewData["RewardId"] = new SelectList(_context.Rewards.Include(r => r.Project), "RewardId", "Description", userReward.RewardId);
-
-                _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: UserRewardController/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-
-            var userReward = await _context.UserRewards.FindAsync(id);
-
-            if (userReward == null)
-            {
-                return NotFound();
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", userReward.UserId);
- 
-            ViewData["RewardId"] = new SelectList(_context.Rewards.Include(r => r.Project), "RewardId", "Description", userReward.RewardId);
-
-            return View(userReward);
-        }
-
-        // POST: UserRewardController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserRewardId,UserId,RewardId,DateAwarded")] UserReward userReward)
-        {
-            if (id != userReward.UserRewardId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(userReward);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserRewardExists(userReward.UserRewardId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", userReward.UserId);
- 
-            ViewData["RewardId"] = new SelectList(_context.Rewards.Include(r => r.Project), "RewardId", "Description", userReward.RewardId);
-
-            return View(userReward);
-        }
-
-        // GET: UserRewardController/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
- 
-
-            var userReward = await _context.UserRewards
-                .Include(ur => ur.User)
-                .Include(ur => ur.Reward)
+    [Authorize]
+    public async Task<IActionResult> Details(int id)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userReward = await _context.UserRewards
+            .Include(ur => ur.Reward)
                 .ThenInclude(r => r.Project)
-                .FirstOrDefaultAsync(m => m.UserRewardId == id);
+            .FirstOrDefaultAsync(ur => ur.UserRewardId == id && ur.UserId == userId);
 
-
-            if (userReward == null)
-            {
-                return NotFound();
-            }
-
-            return View(userReward);
+        if (userReward == null)
+        {
+            return NotFound();
         }
 
-        // POST: UserRewardController/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        return View(userReward);
+    }
+
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> AssignReward(string userId, int rewardId)
+    {
+        try
         {
+            var userReward = new UserReward
+            {
+                UserId = userId,
+                RewardId = rewardId,
+                DateAwarded = DateTime.Now
+            };
 
-            var userReward = await _context.UserRewards.FindAsync(id);
+            // Check if user already has this reward
+            var existingReward = await _context.UserRewards
+                .FirstOrDefaultAsync(ur => ur.UserId == userId && ur.RewardId == rewardId);
 
- 
-            _context.UserRewards.Remove(userReward);
+            if (existingReward != null)
+            {
+                return BadRequest("User already has this reward");
+            }
 
+            _context.UserRewards.Add(userReward);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
 
-        private bool UserRewardExists(int id)
+            _logger.LogInformation($"Reward {rewardId} assigned to user {userId}");
+            return Ok("Reward assigned successfully");
+        }
+        catch (Exception ex)
         {
-
-            return _context.UserRewards.Any(e => e.UserRewardId == id);
-
+            _logger.LogError($"Error assigning reward: {ex.Message}");
+            return StatusCode(500, "Error assigning reward");
         }
+    }
+
+    [Authorize]
+    public async Task<IActionResult> CheckEligibility(int projectId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        // Get user's total contribution to this project
+        var totalContribution = await _context.Contributions
+            .Where(c => c.UserId == userId && c.ProjectId == projectId)
+            .SumAsync(c => c.Amount);
+
+        // Get all rewards for this project
+        var eligibleRewards = await _context.Rewards
+            .Where(r => r.ProjectId == projectId && r.MinimumContribution <= totalContribution)
+            .ToListAsync();
+
+        // Get rewards user already has
+        var existingRewards = await _context.UserRewards
+            .Where(ur => ur.UserId == userId && ur.Reward.ProjectId == projectId)
+            .Select(ur => ur.RewardId)
+            .ToListAsync();
+
+        // Filter out rewards user already has
+        var newEligibleRewards = eligibleRewards
+            .Where(r => !existingRewards.Contains(r.RewardId))
+            .ToList();
+
+        // Automatically assign new eligible rewards
+        foreach (var reward in newEligibleRewards)
+        {
+            var userReward = new UserReward
+            {
+                UserId = userId,
+                RewardId = reward.RewardId,
+                DateAwarded = DateTime.Now
+            };
+            _context.UserRewards.Add(userReward);
+        }
+
+        if (newEligibleRewards.Any())
+        {
+            await _context.SaveChangesAsync();
+            _logger.LogInformation($"New rewards assigned to user {userId} for project {projectId}");
+        }
+
+        return Json(new
+        {
+            totalContribution,
+            newRewardsCount = newEligibleRewards.Count,
+            allEligibleRewards = eligibleRewards
+        });
+    }
+
+    [Authorize]
+    public async Task<IActionResult> GetProjectRewards(int projectId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var userRewards = await _context.UserRewards
+            .Include(ur => ur.Reward)
+            .Where(ur => ur.UserId == userId && ur.Reward.ProjectId == projectId)
+            .OrderBy(ur => ur.Reward.MinimumContribution)
+            .ToListAsync();
+
+        return Json(userRewards);
     }
 }

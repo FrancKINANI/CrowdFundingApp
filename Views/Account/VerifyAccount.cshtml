@@ -1,0 +1,18 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    ViewData["Title"] = "Verify Account";
+}
+
+<div class="text-center">
+    <h1>@ViewData["Title"]</h1>
+    <p>Click the button below to verify your account with email: @ViewBag.Email</p>
+
+    <form asp-action="ConfirmVerification" method="post">
+        <input type="hidden" name="email" value="@ViewBag.Email" />
+        <button type="submit" class="btn btn-primary">Verify Account</button>
+    </form>
+</div>
